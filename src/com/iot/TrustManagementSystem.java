@@ -9,12 +9,8 @@ package com.iot;
 
 import com.iot.io.FileDialog;
 import com.iot.io.FileIO;
+import com.iot.model.TrustManager;
 
-import javax.swing.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Scanner;
 
 public class TrustManagementSystem {
@@ -39,7 +35,6 @@ public class TrustManagementSystem {
             if(TM == null) {
                 //User must set up the trust manager
                 TM = new TrustManager();
-                System.out.println("test");
                 /* Display user to enter in existing trust model
                    or use existing defaults to configure
                 */
@@ -50,6 +45,7 @@ public class TrustManagementSystem {
                 boolean valid = false;
 
                 while(!valid) {
+                    System.out.print("\t=> ");
                     String option = input.next();
                     switch(option) {
                         case "1":
@@ -71,7 +67,7 @@ public class TrustManagementSystem {
                 System.out.println("Select an option: \n\t1. Import Trust Model\n\t2. Configure Trust Model" +
                         "\n\t3. Run Simulation\n\t4. Retrieve Results\n\t5. Save Trust Model" +
                         "\n\t6. Quit");
-                System.out.print("\t[:");
+                System.out.print("\t=> ");
 
                 String option = input.next();
                 switch(option) {

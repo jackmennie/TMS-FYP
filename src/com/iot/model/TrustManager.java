@@ -1,4 +1,4 @@
-package com.iot;
+package com.iot.model;
 
 public class TrustManager {
     //Step 1 (Information Gathering
