@@ -108,6 +108,8 @@ public class TrustManagementSystem {
     }
 
     private void initTrustModel() {
+        TrustManager manager = new TrustManager();
 
+        manager.init(200, 100, 0.2, 0.1, 1, 6);
     }
 }
