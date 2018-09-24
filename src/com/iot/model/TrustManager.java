@@ -1,56 +1,54 @@
 package com.iot.model;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
 public class TrustManager {
+    private Report report;
+
     private Node nodeList[];
     private Node contrainedNodelist[];
-    private double qualityOfRecommendation;
-
-    private Service serviceList[];
-
+    //private double qualityOfRecommendation;
+    private ServiceRequester serviceList[];
     private Parameters model;
-    //Step 1 (Information Gathering
-    /*
-        Nodes set to trustworthy [1]
-        Rep would be 0
-     */
 
-    //Step 2 (Entity Selection)
-
-    //Step 3 (Transaction)
-
-    //Step 4 (Reward and Punish)
-
-    //Step 5 (Learning)
+    //print stream to file
+    PrintStream o;
 
     /**
      * Step 1: Initialisation
-     * All nodes are assumed trustworthy
-     * set up the nodes and set the trustworthy to 1
-     * It will be assumed that the rep will be 0.
-     *
-     * numNodes = the amount of nodes within the network
-     * numcNodes = the amount of constrained nodes within the network (which are unable to provide assistance to other nodes)
-     * numPwNodes = Percentage of poor witness nodes
-     * numMaliciousNodes = Percentage of malicious nodes
-     * iQualityofRec = Initial quality of recommendation
-     * numServices = number of services within the network
+     *      * All nodes are assumed trustworthy
+     *      * set up the nodes and set the trustworthy to 1
+     *      * It will be assumed that the rep will be 0.
+     * @param numNodes = the amount of nodes within the network
+     * @param numcNodes = the amount of constrained nodes within the network (which are unable to provide assistance to other nodes)
+     * @param numPwNodes = Percentage of poor witness nodes
+     * @param numMaliciousNodes = Percentage of malicious nodes
+     * @param iQualityofRec = Initial quality of recommendation
+     * @param numServices = number of services within the network
      */
-    public void init(int numNodes, int numcNodes, double numPwNodes, double numMaliciousNodes, double iQualityofRec, int numServices) {
+    public void init(int numNodes, int numcNodes, double numPwNodes, double numMaliciousNodes, double iQualityofRec, int numServices)
+        throws FileNotFoundException {
+        o = new PrintStream(new File("out.dbg"));
+
+        System.setOut(o);
+
         System.out.println("init");
         nodeList = new Node[numNodes];
         contrainedNodelist = new Node[numcNodes];
 
-        qualityOfRecommendation = iQualityofRec;
 
-        serviceList = new Service[numServices];
+        serviceList = new ServiceRequester[numServices];
 
-        //Create the amount of
+        //Create the total amount of nodes
         int networkSize = nodeList.length + contrainedNodelist.length;
+
+        //get the value of nodes from the percentage
         int poorWitnessNodes = (int)(networkSize * numPwNodes);
         int maliciousNodes = (int)(networkSize * numMaliciousNodes);
 
@@ -80,7 +78,9 @@ public class TrustManager {
                 }
             }
 
-            nodeList[i] = new Node(i, mNode, pwNode, false);
+            //public Node(int nodeID, Position pos, int energyLevel, double qualityOfRecommendation, ServiceRequester[] services, boolean malicious, boolean poorWitnessNode, boolean constrainedNode) {
+            Position newPos = new Position(1,1,0);
+            nodeList[i] = new Node(i, newPos, 100, iQualityofRec, null, mNode, pwNode, false);
         }
 
 
@@ -114,21 +114,26 @@ public class TrustManager {
 
         System.out.println("Poor witness nodes count: " + poorWitnessNodes);
 
-
-
-        //Initialise each node
-        for(int i = 0; i < nodeList.length; i++) {
-
-        }
+        PrintStream console = System.out;
+        System.setOut(console);
+        System.out.println("test");
     }
-    
+
+    /**
+     * This function will randomly and uniquely pick a number between 0 and the node list
+     * length and then assign it to the node position array.
+     * @param r
+     * @param amount
+     * @param networkSize
+     * @return node positions
+     */
     private ArrayList<Integer> generateNodePosition(Random r, int amount, int networkSize) {
         ArrayList<Integer> randomNumArray = new ArrayList<>();
         boolean checked = false;
 
         int position;
 
-        //This is to generate the amount of poor witness nodes within the network
+        //This is to generate the amount of nodes within the network
         for(int i = 0; i < amount; i++) {
             do {
                 position = r.nextInt(networkSize);
@@ -169,6 +174,22 @@ public class TrustManager {
         Collections.sort(randomNumArray);
 
         return randomNumArray;
+    }
+
+    /*
+        Step 2 Entity Selection
+     */
+    public void entitySelection() {
+        //step 2.1 Restriction of the set of proxies
+
+        //step 2.2 Restriction of the set of Reports Rij for each proxy Pi
+
+        //step 2.3 Computation of the weights WRij for each retained report ij in the step 2.2
+
+        //step 2.4 Computation of the trust value Ti for each proxy Pi
+
+        //step 2.5 Provision o the best rated proxies Pi
+
     }
 }
 

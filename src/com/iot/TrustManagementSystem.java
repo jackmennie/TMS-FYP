@@ -11,6 +11,7 @@ import com.iot.io.FileDialog;
 import com.iot.io.FileIO;
 import com.iot.model.TrustManager;
 
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class TrustManagementSystem {
@@ -110,6 +111,10 @@ public class TrustManagementSystem {
     private void initTrustModel() {
         TrustManager manager = new TrustManager();
 
-        manager.init(200, 100, 0.2, 0.1, 1, 6);
+        try {
+            manager.init(200, 100, 0.2, 0.1, 1, 6);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }

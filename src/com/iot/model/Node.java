@@ -2,15 +2,27 @@ package com.iot.model;
 
 public class Node {
     private int nodeID;
+
+    private Position pos;
+    private int energyLevel;
+    private double qualityOfRecommendation;
+    private ServiceRequester services[];
+
     private boolean malicious;
     private boolean poorWitnessNode;
     private boolean constrainedNode;
 
-    public Node(int id, boolean malicious, boolean pwNode, boolean cNode) {
-        this.nodeID = id;
+    private double realQualityOfRecommendation;
+
+    public Node(int nodeID, Position pos, int energyLevel, double qualityOfRecommendation, ServiceRequester[] services, boolean malicious, boolean poorWitnessNode, boolean constrainedNode) {
+        this.nodeID = nodeID;
+        this.pos = pos;
+        this.energyLevel = energyLevel;
+        this.qualityOfRecommendation = qualityOfRecommendation;
+        this.services = services;
         this.malicious = malicious;
-        this.poorWitnessNode = pwNode;
-        this.constrainedNode = cNode;
+        this.poorWitnessNode = poorWitnessNode;
+        this.constrainedNode = constrainedNode;
     }
 
     public String toString() {
