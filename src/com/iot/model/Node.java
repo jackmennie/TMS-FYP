@@ -6,7 +6,7 @@ public class Node {
     private Position pos;
     private int energyLevel;
     private double qualityOfRecommendation;
-    private ServiceRequester services[];
+    private ServiceProvider services[];
 
     private boolean malicious;
     private boolean poorWitnessNode;
@@ -14,7 +14,7 @@ public class Node {
 
     private double realQualityOfRecommendation;
 
-    public Node(int nodeID, Position pos, int energyLevel, double qualityOfRecommendation, ServiceRequester[] services, boolean malicious, boolean poorWitnessNode, boolean constrainedNode) {
+    public Node(int nodeID, Position pos, int energyLevel, double qualityOfRecommendation, ServiceProvider[] services, boolean malicious, boolean poorWitnessNode, boolean constrainedNode) {
         this.nodeID = nodeID;
         this.pos = pos;
         this.energyLevel = energyLevel;
