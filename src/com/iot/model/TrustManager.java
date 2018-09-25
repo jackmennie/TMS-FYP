@@ -9,7 +9,8 @@ import java.util.Collections;
 import java.util.Random;
 
 public class TrustManager {
-    private Report report;
+    private Report reports[][];
+    private Report rTarget;
 
     private Node nodeList[];
     private Node contrainedNodelist[];
@@ -36,7 +37,7 @@ public class TrustManager {
         throws FileNotFoundException {
         o = new PrintStream(new File("out.dbg"));
 
-        System.setOut(o);
+        //System.setOut(o);
 
         System.out.println("init");
         nodeList = new Node[numNodes];
@@ -66,14 +67,14 @@ public class TrustManager {
             boolean pwNode = false;
             boolean mNode = false;
 
-            for(int j = 0; j < pwNodesPos.size(); j++) {
-                if(i == pwNodesPos.get(j)) {
+            for (Integer pwNodesPo : pwNodesPos) {
+                if (i == pwNodesPo) {
                     pwNode = true;
                 }
             }
 
-            for(int j = 0; j < malNodesPos.size(); j++) {
-                if(i == malNodesPos.get(j)) {
+            for (Integer malNodesPo : malNodesPos) {
+                if (i == malNodesPo) {
                     mNode = true;
                 }
             }
@@ -108,8 +109,8 @@ public class TrustManager {
             }
         }
 
-        for(int i = 0; i < nodeList.length; i++) {
-            System.out.println(nodeList[i].toString());
+        for (Node i : nodeList) {
+            System.out.println(i.toString());
         }
 
         System.out.println("Poor witness nodes count: " + poorWitnessNodes);
@@ -183,6 +184,15 @@ public class TrustManager {
         //step 2.1 Restriction of the set of proxies
 
         //step 2.2 Restriction of the set of Reports Rij for each proxy Pi
+            /*
+                Service target is the current service in request
+                Capability target is the current Node Capability
+
+                Rtarget is the next report to be received
+
+                context similarity between a report about previous interaction and present target report is considering
+                a global contextual distance dij
+             */
 
         //step 2.3 Computation of the weights WRij for each retained report ij in the step 2.2
 
@@ -190,6 +200,14 @@ public class TrustManager {
 
         //step 2.5 Provision o the best rated proxies Pi
 
+    }
+
+
+    private ArrayList<Double> calculateContextualDistance() {
+        ArrayList<Double> temp ;
+
+
+        return temp;
     }
 }
 
