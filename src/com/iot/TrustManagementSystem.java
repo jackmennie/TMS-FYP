@@ -11,7 +11,9 @@ import com.iot.io.FileDialog;
 import com.iot.io.FileIO;
 import com.iot.model.TrustManager;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.Scanner;
 
 public class TrustManagementSystem {
@@ -21,9 +23,10 @@ public class TrustManagementSystem {
     TrustManager TM;    //Trust Manager Object
 
 
-    public static void main (String args[]) {
+    public static void main (String args[])  {
         TrustManagementSystem TMS = new TrustManagementSystem();
         TMS.input = new Scanner(System.in);
+
 
         TMS.menu();
     }
@@ -109,12 +112,16 @@ public class TrustManagementSystem {
     }
 
     private void initTrustModel() {
-        TrustManager manager = new TrustManager();
+        TM = new TrustManager();
 
         try {
-            manager.init(200, 100, 0.2, 0.1, 1, 6);
+            TM.init(200, 100, 0.2, 0.1, 1, 6);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    private void runSimulation() {
+        TM.entitySelection();
     }
 }

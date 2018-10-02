@@ -1,20 +1,21 @@
 package com.iot.model;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Random;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public class TrustManager {
     private ArrayList<ArrayList<Report>> reportlist;
+
     private Report rTarget;
 
     private Node nodeList[];
 
-    private ServiceProvider serviceList[];
+    private ServiceProvider serviceProviders[];
     private Parameters model;
 
     //print stream to file
@@ -35,10 +36,11 @@ public class TrustManager {
     public void init(int numNodes, int numcNodes, double numPwNodes, double numMaliciousNodes, double iQualityOfRec, int numServices)
         throws FileNotFoundException {
         o = new PrintStream(new File("out.dbg"));
+        PrintStream console = System.out;
 
-        //System.setOut(o);
+        System.setOut(o);
 
-        serviceList = new ServiceProvider[numServices];
+        serviceProviders = new ServiceProvider[numServices];
 
         //Create the total amount of nodes
         int networkSize = numNodes + numcNodes;
@@ -50,6 +52,10 @@ public class TrustManager {
 
 
         Random r = new Random(System.currentTimeMillis());
+
+        for(int i = 0; i < numServices; i++) {
+            serviceProviders[i] = new ServiceProvider(i, chooseCapability(r));
+        }
 
         //Generate a list of positions for the poor witness nodes
         ArrayList<Integer> pwNodesPos = generateNodePosition(r, poorWitnessNodes, networkSize);
@@ -84,19 +90,27 @@ public class TrustManager {
             nodeList[i] = new Node(i, newPos, 100, iQualityOfRec, null, isMaliciousNode, isPoorWitnessNode, isConstrainedNode);
         }
 
-        for (Node i : nodeList) {
-            System.out.println(i.toString());
-        }
-
-        //create initial report
+        //create initial reports
         reportlist = new ArrayList<>();
 
-        ArrayList<Report> tempList = new ArrayList<>();
-        
-        Report newReport = new Report(serviceList[0], 100, 2, new Date());
+        for (Node i : nodeList) {
+            //System.out.println(i.toString());
+
+            ArrayList<Report> tempList = new ArrayList<>();
+            Report tempReport = new Report(chooseService(r), chooseCapability(r), chooseNote(r), new Date());
+
+            tempList.add(tempReport);
+            reportlist.add(tempList);
+        }
+
+        for(ArrayList<Report> list : reportlist) {
+            System.out.println(list);
+//            for(Report report : list) {
+//                System.out.println(report.toString());
+//            }
+        }
 
 
-        PrintStream console = System.out;
         System.setOut(console);
     }
 
@@ -157,6 +171,36 @@ public class TrustManager {
         return randomNumArray;
     }
 
+
+    /**
+     * @param r for choosing a random service from the list
+     * @return a random service from the provided list
+     */
+    private ServiceProvider chooseService(@NotNull Random r) {
+        return serviceProviders[r.nextInt(serviceProviders.length)];
+    }
+
+    /**
+     * @param r for choosing a random capability from 0 to 100
+     * @return returns the random capability
+     */
+    private double chooseCapability(@NotNull Random r) {
+        return r.nextDouble()*100; // next double returns a value between 0-1.0
+    }
+
+    /**
+     * This function chooses either -1, 0 or 1
+     * @param r for choosing the random note
+     * @return either -1, 0 or 1
+     */
+    private int chooseNote(@NotNull Random r) {
+        List<Integer> noteRange = new ArrayList<>();
+        noteRange.add(-1);
+        noteRange.add(0);
+        noteRange.add(1);
+
+        return noteRange.get(r.nextInt(noteRange.size()));
+    }
     /*
         Step 2 Entity Selection
      */
@@ -174,6 +218,19 @@ public class TrustManager {
                 a global contextual distance dij
              */
 
+            ArrayList<Report> currentNode = reportlist.get(0);
+
+            ServiceProvider sTarget = currentNode.get(0).getService(); //Current service in request
+            double cTarget = currentNode.get(0).getCapability(); //Current node capability
+
+        ArrayList<Report> rTarget = reportlist.get(1); //next report
+
+        double dS[] = [];
+        double dC = 0;
+
+        double contextualDistance = calculateContextualDistance(dS, dC);
+
+
         //step 2.3 Computation of the weights WRij for each retained report ij in the step 2.2
 
         //step 2.4 Computation of the trust value Ti for each proxy Pi
@@ -183,12 +240,18 @@ public class TrustManager {
     }
 
 
-//    private ArrayList<Double> calculateContextualDistance() {
-//        ArrayList<Double> temp ;
-//
-//
-//        return temp;
-//    }
+
+    private double calculateContextualDistance(double dS, double dC) {
+        double temp = 0.0;
+
+
+        return temp;
+    }
+
+    private double findMin(double valueX, double valueY) {
+        if(valueX < valueY) return valueX;
+        else return valueY;
+    }
 }
 
 
