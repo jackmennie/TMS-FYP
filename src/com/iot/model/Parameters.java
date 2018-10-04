@@ -17,6 +17,10 @@ public class Parameters {
     public static double theta; // θ in the range [0,1], express the memory of the system
     public static double lambda; // λ in the range [0,1], express the memory of the system
 
+    //Contextual Distance params
+    public static double dSMax;
+    public static double dCMax;
+
     public Parameters() {
 
     }
@@ -25,12 +29,15 @@ public class Parameters {
 
     }
 
-    public void setDefaults() {
+    public static void setDefaults() {
         maxTrust = 1.5;
         minTrust = -maxTrust;
 
         eta = 0;
         theta = 0;
         lambda = 0;
+
+        dSMax = 25;
+        dCMax = 15;
     }
 }

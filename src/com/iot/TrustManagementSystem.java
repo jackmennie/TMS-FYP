@@ -9,6 +9,7 @@ package com.iot;
 
 import com.iot.io.FileDialog;
 import com.iot.io.FileIO;
+import com.iot.model.Parameters;
 import com.iot.model.TrustManager;
 
 import java.io.File;
@@ -83,6 +84,7 @@ public class TrustManagementSystem {
                         break;
                     case "3":
                         //run
+                        runSimulation();
                         break;
                     case "4":
                         //results
@@ -112,6 +114,7 @@ public class TrustManagementSystem {
     }
 
     private void initTrustModel() {
+        Parameters.setDefaults();
         TM = new TrustManager();
 
         try {

@@ -1,6 +1,6 @@
 package com.iot.model;
 
-import org.jetbrains.annotations.NotNull;
+//import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,6 +20,7 @@ public class TrustManager {
 
     //print stream to file
     PrintStream o;
+    PrintStream console;
 
     /**
      * Step 1: Initialisation
@@ -36,7 +37,7 @@ public class TrustManager {
     public void init(int numNodes, int numcNodes, double numPwNodes, double numMaliciousNodes, double iQualityOfRec, int numServices)
         throws FileNotFoundException {
         o = new PrintStream(new File("out.dbg"));
-        PrintStream console = System.out;
+        console = System.out;
 
         System.setOut(o);
 
@@ -98,8 +99,10 @@ public class TrustManager {
 
             ArrayList<Report> tempList = new ArrayList<>();
             Report tempReport = new Report(chooseService(r), chooseCapability(r), chooseNote(r), new Date());
+            Report anotherReport = new Report(chooseService(r), chooseCapability(r), chooseNote(r), new Date());
 
             tempList.add(tempReport);
+            tempList.add(anotherReport);
             reportlist.add(tempList);
         }
 
@@ -176,7 +179,7 @@ public class TrustManager {
      * @param r for choosing a random service from the list
      * @return a random service from the provided list
      */
-    private ServiceProvider chooseService(@NotNull Random r) {
+    private ServiceProvider chooseService(Random r) {
         return serviceProviders[r.nextInt(serviceProviders.length)];
     }
 
@@ -184,7 +187,7 @@ public class TrustManager {
      * @param r for choosing a random capability from 0 to 100
      * @return returns the random capability
      */
-    private double chooseCapability(@NotNull Random r) {
+    private double chooseCapability(Random r) {
         return r.nextDouble()*100; // next double returns a value between 0-1.0
     }
 
@@ -193,7 +196,7 @@ public class TrustManager {
      * @param r for choosing the random note
      * @return either -1, 0 or 1
      */
-    private int chooseNote(@NotNull Random r) {
+    private int chooseNote(Random r) {
         List<Integer> noteRange = new ArrayList<>();
         noteRange.add(-1);
         noteRange.add(0);
@@ -205,6 +208,7 @@ public class TrustManager {
         Step 2 Entity Selection
      */
     public void entitySelection() {
+        System.setOut(console);
         //step 2.1 Restriction of the set of proxies
             //we don't need to restrict at this current time.
         //step 2.2 Restriction of the set of Reports Rij for each proxy Pi
@@ -217,18 +221,68 @@ public class TrustManager {
                 context similarity between a report about previous interaction and present target report is considering
                 a global contextual distance dij
              */
+        //double dS[] = new double[100];
+        //double dC[] = 0;
+        //double contextualDistance = calculateContextualDistance(dS, dC);
 
-            ArrayList<Report> currentNode = reportlist.get(0);
+        double dS[][] = new double[nodeList.length][];
+        double dC[][] = new double[nodeList.length][];
+        double s[][] = new double[nodeList.length][]; //current report service
+        double c[][] = new double[nodeList.length][]; //current report capacity
 
-            ServiceProvider sTarget = currentNode.get(0).getService(); //Current service in request
-            double cTarget = currentNode.get(0).getCapability(); //Current node capability
+        double sTarget = 0;
+        double cTarget = 0;
 
-        ArrayList<Report> rTarget = reportlist.get(1); //next report
+        for(int i = 0; i < reportlist.size(); i++) {
+            //Check if only element in the list
+            ArrayList<Report> currentNodeReports = reportlist.get(i);
 
-        double dS[] = [];
-        double dC = 0;
+            dS[i] = new double[currentNodeReports.size()];
+            dC[i] = new double[currentNodeReports.size()];
 
-        double contextualDistance = calculateContextualDistance(dS, dC);
+            s[i] = new double[currentNodeReports.size()];
+            c[i] = new double[currentNodeReports.size()];
+
+            if(currentNodeReports.size() == 1) {
+//                Report rTarget = currentNodeReports.get(0);
+//                ServiceProvider sTarget = currentNodeReports.get(0).getService();
+//                double cTarget = currentNodeReports.get(0).getCapability();
+
+                dS[i][0] = 0; //no change in service capability
+                dC[i][0] = 0; //no change in node capability
+            } else {
+
+
+                for(int j = 0; j < currentNodeReports.size(); j++) {
+                    if((j+1) < currentNodeReports.size()) {
+                        Report rTarget = currentNodeReports.get(j + 1);
+                        sTarget = rTarget.getService().getCapability();
+                        cTarget = rTarget.getCapability();
+                    }
+
+                    Report currentReport = currentNodeReports.get(j);
+
+
+                    dS[i][j] = sTarget - currentReport.getService().getCapability();
+                    dC[i][j] = cTarget - currentReport.getCapability();
+
+                    s[i][j] = currentReport.getService().getCapability();
+                    c[i][j] = currentReport.getCapability();
+                }
+            }
+        }
+
+        //compute contextual distance
+        double sMax[] = findMax(s);
+        double cMax[] = findMax(c);
+        double contextualDistance[][] = calculateContextualDistance(dS, dC, sMax, cMax, s, c, sTarget, cTarget);
+
+
+        for(int i = 0; i < contextualDistance.length; i++) {
+            for(int j = 0; j < contextualDistance[i].length; j++) {
+                System.out.println(contextualDistance[i][j] + ",");
+            }
+        }
 
 
         //step 2.3 Computation of the weights WRij for each retained report ij in the step 2.2
@@ -241,11 +295,64 @@ public class TrustManager {
 
 
 
-    private double calculateContextualDistance(double dS, double dC) {
-        double temp = 0.0;
+    private double[][] calculateContextualDistance(
+            double dS[][], double dC[][], double sMax[], double cMax[], double s[][], double c[][], double sTarget, double cTarget) {
 
+        System.setOut(console);
 
-        return temp;
+        System.out.println("dS - ");
+        System.out.println(Arrays.deepToString(dS));
+        System.out.println("dC - ");
+        System.out.println(Arrays.deepToString(dC));
+        System.out.println("sMax - ");
+        System.out.println(Arrays.toString(sMax));
+        System.out.println("cMax - ");
+        System.out.println(Arrays.toString(cMax));
+        System.out.println("s - ");
+        System.out.println(Arrays.deepToString(s));
+        System.out.println("c - ");
+        System.out.println(Arrays.deepToString(c));
+        System.out.println("sTarget - ");
+        System.out.println(sTarget);
+        System.out.println("cTarget - ");
+        System.out.println(cTarget);
+
+        double d[][] = new double[dS.length][];
+
+        for(int i = 0; i < dS.length; i++) {
+            for(int j = 0; j < dS[i].length; j++) {
+                d[i] = new double[dS[i].length];
+                d[i][j] = findMin(
+                        Math.sqrt((Math.pow(Parameters.dSMax, 2) + Math.pow(Parameters.dCMax, 2)) *
+                                ((dS[i][j]/Parameters.dSMax)+(dC[i][j]/Parameters.dCMax))),
+
+                        Math.sqrt(
+                                (Math.pow(Parameters.dSMax, 2) + Math.pow(Parameters.dCMax, 2))
+                                        *
+                                ((Math.pow(((sMax[i] - s[i][j]) / (sMax[i] - (sTarget-Parameters.eta))),2))
+                                        + (Math.pow((c[i][j] / cTarget + Parameters.eta), 2))))
+                );
+            }
+        }
+
+        return d;
+    }
+    private double[] findMax(double value[][]) {
+        double sMax[] = new double[value.length];
+
+        for(int i = 0; i < value.length; i++) {
+            double max = value[i][0];
+
+            for(int j = 0; j < value[i].length; j++) {
+                if(value[i][j] > max) {
+                    max = value[i][j];
+                }
+            }
+
+            sMax[i] = max;
+        }
+
+        return sMax;
     }
 
     private double findMin(double valueX, double valueY) {
