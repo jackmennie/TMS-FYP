@@ -33,7 +33,7 @@ public class Parameters {
         maxTrust = 1.5;
         minTrust = -maxTrust;
 
-        eta = 0;
+        eta = 5;
         theta = 0;
         lambda = 0;
 

@@ -100,9 +100,10 @@ public class TrustManager {
             ArrayList<Report> tempList = new ArrayList<>();
             Report tempReport = new Report(chooseService(r), chooseCapability(r), chooseNote(r), new Date());
             Report anotherReport = new Report(chooseService(r), chooseCapability(r), chooseNote(r), new Date());
-
+            Report anotherReport2 = new Report(chooseService(r), chooseCapability(r), chooseNote(r), new Date());
             tempList.add(tempReport);
             tempList.add(anotherReport);
+            //tempList.add(anotherReport2);
             reportlist.add(tempList);
         }
 
@@ -254,7 +255,13 @@ public class TrustManager {
 
 
                 for(int j = 0; j < currentNodeReports.size(); j++) {
-                    if((j+1) < currentNodeReports.size()) {
+                    if(j == currentNodeReports.size()-1 ) {
+                        System.out.println("===");
+                        Report rTarget = currentNodeReports.get(0);
+                        sTarget = rTarget.getService().getCapability();
+                        cTarget = rTarget.getCapability();
+                    } else if((j+1) < currentNodeReports.size()) {
+                        System.out.println("test");
                         Report rTarget = currentNodeReports.get(j + 1);
                         sTarget = rTarget.getService().getCapability();
                         cTarget = rTarget.getCapability();
@@ -263,11 +270,17 @@ public class TrustManager {
                     Report currentReport = currentNodeReports.get(j);
 
 
+
                     dS[i][j] = sTarget - currentReport.getService().getCapability();
                     dC[i][j] = cTarget - currentReport.getCapability();
 
                     s[i][j] = currentReport.getService().getCapability();
                     c[i][j] = currentReport.getCapability();
+
+                    System.out.println("Calculating Ds with: " + sTarget + ", and current: " + currentReport.getService().getCapability());
+                    System.out.println("\tDs=" + dS[i][j]);
+                    System.out.println("Calculating Dc with: " + cTarget + ", and current: " + currentReport.getCapability());
+                    System.out.println("\tDc=" + dC[i][j]);
                 }
             }
         }
@@ -278,11 +291,13 @@ public class TrustManager {
         double contextualDistance[][] = calculateContextualDistance(dS, dC, sMax, cMax, s, c, sTarget, cTarget);
 
 
-        for(int i = 0; i < contextualDistance.length; i++) {
-            for(int j = 0; j < contextualDistance[i].length; j++) {
-                System.out.println(contextualDistance[i][j] + ",");
-            }
-        }
+        System.out.println(Arrays.deepToString(contextualDistance));
+
+//        for(int i = 0; i < contextualDistance.length; i++) {
+//            for(int j = 0; j < contextualDistance[i].length; j++) {
+//                System.out.print(contextualDistance[i][j] + ",");
+//            }
+//        }
 
 
         //step 2.3 Computation of the weights WRij for each retained report ij in the step 2.2
@@ -320,20 +335,49 @@ public class TrustManager {
         double d[][] = new double[dS.length][];
 
         for(int i = 0; i < dS.length; i++) {
+            d[i] = new double[dS[i].length];
             for(int j = 0; j < dS[i].length; j++) {
-                d[i] = new double[dS[i].length];
-                d[i][j] = findMin(
-                        Math.sqrt((Math.pow(Parameters.dSMax, 2) + Math.pow(Parameters.dCMax, 2)) *
-                                ((dS[i][j]/Parameters.dSMax)+(dC[i][j]/Parameters.dCMax))),
+                if(dS[i][j] != 0.0 || dC[i][j] != 0.0) {
+                    if(dS[i][j] > 0) {
+                        d[i][j] = findMin(
+                                Math.sqrt((Math.pow(Parameters.dSMax, 2) + Math.pow(Parameters.dCMax, 2)) *
+                                        ((dS[i][j] / Parameters.dSMax) + (dC[i][j] / Parameters.dCMax))),
 
-                        Math.sqrt(
-                                (Math.pow(Parameters.dSMax, 2) + Math.pow(Parameters.dCMax, 2))
-                                        *
-                                ((Math.pow(((sMax[i] - s[i][j]) / (sMax[i] - (sTarget-Parameters.eta))),2))
-                                        + (Math.pow((c[i][j] / cTarget + Parameters.eta), 2))))
-                );
+                                Math.sqrt(
+                                        (Math.pow(Parameters.dSMax, 2) + Math.pow(Parameters.dCMax, 2))
+                                                *
+                                                ((Math.pow(((sMax[i] - s[i][j]) / (sMax[i] - (sTarget - Parameters.eta))), 2))
+                                                        + (Math.pow((c[i][j] / cTarget + Parameters.eta), 2))))
+                        );
+                    } else {
+                        d[i][j] = findMin(
+                                Math.sqrt((Math.pow(Parameters.dSMax, 2) + Math.pow(Parameters.dCMax, 2)) *
+                                        ((dS[i][j] / Parameters.dSMax) + (dC[i][j] / Parameters.dCMax))),
+
+                                Math.sqrt(
+                                        (Math.pow(Parameters.dSMax, 2) + Math.pow(Parameters.dCMax, 2))
+                                                *
+                                                ((Math.pow(((cMax[i] - c[i][j]) / (cMax[i] - (cTarget - Parameters.eta))), 2))
+                                                        + (Math.pow((s[i][j] / sTarget + Parameters.eta), 2))))
+                        );
+                    }
+                } else {
+                    d[i][j] = 0;
+                }
+                System.out.println("The calculated D is: " + d[i][j]);
+                System.out.print("\tDs[" + dS[i][j]);
+                System.out.print("], Dc[" + dC[i][j]);
+                System.out.print("], cMax[" + cMax[i]);
+                System.out.print("], sMax[" + sMax[i]);
+                System.out.print("], s[" + s[i][j]);
+                System.out.print("], c[" + c[i][j]);
+                System.out.print("], sTarget[" + sTarget);
+                System.out.print("], cTarget[" + cTarget + "]\n\n");
+
             }
         }
+
+
 
         return d;
     }
