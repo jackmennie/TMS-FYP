@@ -34,8 +34,8 @@ public class Parameters {
         minTrust = -maxTrust;
 
         eta = 5;
-        theta = 0;
-        lambda = 0;
+        theta = 4;
+        lambda = 2;
 
         dSMax = 25;
         dCMax = 15;

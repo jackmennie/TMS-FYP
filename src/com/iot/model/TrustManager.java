@@ -305,14 +305,44 @@ public class TrustManager {
             }
         }
 
-//        for(int i = 0; i < contextualDistance.length; i++) {
-//            for(int j = 0; j < contextualDistance[i].length; j++) {
-//                System.out.print(contextualDistance[i][j] + ",");
-//            }
-//        }
-
 
         //step 2.3 Computation of the weights WRij for each retained report ij in the step 2.2
+
+        Date tNow = new Date();
+        double weightRij[][] = new double[nodeList.length][];
+
+        for(int i = 0; i < reportlist.size(); i++) {
+            weightRij[i] = new double[reportlist.size()];
+
+            ArrayList<Report> currentNodesList = reportlist.get(i);
+
+            for(int j = 0; j < currentNodesList.size(); j++) {
+                Report report = currentNodesList.get(j);
+
+                System.out.println("Calculating Weight for report: " + i + j);
+
+                System.out.println("\tTime Now: " + tNow.getTime() + ", Report Time: " + report.getTime().getTime());
+
+                Date diff = new Date(tNow.getTime() - report.getTime().getTime());
+                double timeAsDouble = diff.getTime() / 1000.0;
+                System.out.println("\tTime: " + timeAsDouble);
+
+                System.out.println("\tNote: " + report.getNote());
+
+                double paramS = report.getNote() == -1.0 ? 1.0 : 0.0;
+
+                System.out.println("\tParamS: " + paramS);
+
+                System.out.println("\tDistance: " + contextualDistance[i][j]);
+                weightRij[i][j] = Math.pow(Parameters.lambda, contextualDistance[i][j])
+                        * Math.pow(Parameters.theta, (paramS+1) * (timeAsDouble));
+
+                System.out.println("\t\tWeight is: " + weightRij[i][j]);
+
+
+
+            }
+        }
 
         //step 2.4 Computation of the trust value Ti for each proxy Pi
 
