@@ -29,4 +29,8 @@ public class Node {
         return "[Node: " + nodeID + ", m: " + malicious + ", pw: " + poorWitnessNode
                 + ", c: " + constrainedNode;
     }
+
+    public double getQualityOfRecommendation() {
+        return qualityOfRecommendation;
+    }
 }

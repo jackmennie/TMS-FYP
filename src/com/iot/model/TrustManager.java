@@ -339,14 +339,33 @@ public class TrustManager {
 
                 System.out.println("\t\tWeight is: " + weightRij[i][j]);
 
-
-
             }
         }
 
         //step 2.4 Computation of the trust value Ti for each proxy Pi
 
-        double trustValue = 0;
+        double trustValue[] = new double[nodeList.length];
+        double sumOfWeights = 0.0;
+        double sumOfWeightsWithNote = 0.0;
+
+        System.out.println("Sum of weights: " + sumOfWeights);
+        System.out.println("Sum of weights * note * QR" + sumOfWeightsWithNote);
+
+        for(int i = 0; i < trustValue.length; i++) {
+            ArrayList<Report> currentNodesList = reportlist.get(i);
+            for (int j = 0; j < currentNodesList.size(); j++) {
+                Report report = currentNodesList.get(j);
+
+                sumOfWeights = sumOfWeights + weightRij[i][j];
+                sumOfWeightsWithNote = sumOfWeightsWithNote + weightRij[i][j] * nodeList[i].getQualityOfRecommendation() * report.getNote();
+            }
+
+            trustValue[i] = (1.0 / sumOfWeights) * sumOfWeightsWithNote;
+
+            System.out.println("Trust: " + trustValue[i]);
+        }
+
+        //calculate the sum of weights
 
         //step 2.5 Provision o the best rated proxies Pi
 
