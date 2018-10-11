@@ -36,7 +36,7 @@ public class TrustManager {
      */
     public void init(int numNodes, int numcNodes, double numPwNodes, double numMaliciousNodes, double iQualityOfRec, int numServices)
         throws FileNotFoundException {
-        o = new PrintStream(new File("out.dbg"));
+        o = new PrintStream(new File("logFile.dbg"));
         console = System.out;
 
         System.setOut(o);
@@ -345,6 +345,8 @@ public class TrustManager {
         }
 
         //step 2.4 Computation of the trust value Ti for each proxy Pi
+
+        double trustValue = 0;
 
         //step 2.5 Provision o the best rated proxies Pi
 
