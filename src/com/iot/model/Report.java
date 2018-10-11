@@ -8,6 +8,7 @@ public class Report {
     private double capability; //capability of node Pi when assisting the service
     private int note; //score given by the requester node to Pi for evaluating the offered service. {-1,0,1}
     private Date time; //time at which the service was obtained.
+    private double distance; //Contextual distance of the report.
 
     public Report(ServiceProvider service, double capability, int note, Date time) {
         this.service = service;
@@ -19,7 +20,7 @@ public class Report {
     @Override
     public String toString() {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-        return "{" + this.service + ", " + this.capability + ", " + this.note + ", " + sdf.format(this.time) + "}";
+        return "{" + this.service + ", " + this.capability + ", " + this.note + ", " + sdf.format(this.time) + ", " + this.distance +"}";
     }
 
     ServiceProvider getService() {
@@ -38,11 +39,19 @@ public class Report {
         return time;
     }
 
+    public double getDistance() {
+        return distance;
+    }
+
     public void setCapability(double capability) {
         this.capability = capability;
     }
 
     public void setNote(int note) {
         this.note = note;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
     }
 }

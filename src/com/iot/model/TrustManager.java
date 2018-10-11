@@ -293,6 +293,18 @@ public class TrustManager {
 
         System.out.println(Arrays.deepToString(contextualDistance));
 
+        //Add to the report[i][j]
+
+        for(int i = 0; i < reportlist.size(); i++) {
+            ArrayList<Report> reports = reportlist.get(i);
+            for(int j = 0; j < reports.size(); j++) {
+                Report report = reports.get(j);
+                report.setDistance(contextualDistance[i][j]);
+
+                System.out.println(report);
+            }
+        }
+
 //        for(int i = 0; i < contextualDistance.length; i++) {
 //            for(int j = 0; j < contextualDistance[i].length; j++) {
 //                System.out.print(contextualDistance[i][j] + ",");
