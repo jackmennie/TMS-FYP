@@ -52,7 +52,9 @@ public class TrustManager {
         int maliciousNodes = (int)(networkSize * numMaliciousNodes);
 
 
-        Random r = new Random(System.currentTimeMillis());
+        //Random r = new Random(System.currentTimeMillis());
+
+        Random r = new Random(185);
 
         for(int i = 0; i < numServices; i++) {
             serviceProviders[i] = new ServiceProvider(i, chooseCapability(r));
@@ -103,7 +105,7 @@ public class TrustManager {
             Report anotherReport2 = new Report(chooseService(r), chooseCapability(r), chooseNote(r), new Date());
             tempList.add(tempReport);
             tempList.add(anotherReport);
-            //tempList.add(anotherReport2);
+            tempList.add(anotherReport2);
             reportlist.add(tempList);
         }
 
@@ -209,7 +211,7 @@ public class TrustManager {
         Step 2 Entity Selection
      */
     public void entitySelection() {
-        System.setOut(console);
+        System.setOut(o);
         //step 2.1 Restriction of the set of proxies
             //we don't need to restrict at this current time.
         //step 2.2 Restriction of the set of Reports Rij for each proxy Pi
@@ -295,16 +297,45 @@ public class TrustManager {
 
         //Add to the report[i][j]
 
+        double t = Math.sqrt(Math.pow(Parameters.dSMax, 2) + Math.pow(Parameters.dCMax, 2)); //adjustable threshold
+
         for(int i = 0; i < reportlist.size(); i++) {
             ArrayList<Report> reports = reportlist.get(i);
             for(int j = 0; j < reports.size(); j++) {
                 Report report = reports.get(j);
-                report.setDistance(contextualDistance[i][j]);
 
-                System.out.println(report);
+                System.out.println("B Reports: " + reports.toString());
+                System.out.println("\tDistance is: " + contextualDistance[i][j]);
+
+                if(contextualDistance[i][j] < t) {
+                    report.setDistance(contextualDistance[i][j]);
+                    System.out.println("\tIts less than t");
+                } else {
+                    report.setDistance(-1);
+                    reports.remove(report);
+                    j = j - 1;
+                    System.out.println("\tremoved report: " + report.getService());
+                }
+
+                System.out.println("Reports: " + reports.toString() + "\n");
             }
+            //reportlist.remove(i);
+            //reportlist.add(reports);
         }
 
+        System.out.println("\n\n ----");
+
+        for(ArrayList<Report> list : reportlist) {
+            //check if there is a 0 distance report left over
+//            for(Report report : list) {
+//                if(report.getDistance() == 0.0 && list.size() == 1) {
+//                    reportlist.remove(list);
+//                }
+//            }
+           System.out.println(list.toString());
+        }
+
+        System.out.println("\n\n ----");
 
         //step 2.3 Computation of the weights WRij for each retained report ij in the step 2.2
 
@@ -333,14 +364,16 @@ public class TrustManager {
 
                 System.out.println("\tParamS: " + paramS);
 
-                System.out.println("\tDistance: " + contextualDistance[i][j]);
-                weightRij[i][j] = Math.pow(Parameters.lambda, contextualDistance[i][j])
+                System.out.println("\tDistance: " + report.getDistance());
+                weightRij[i][j] = Math.pow(Parameters.lambda, report.getDistance())
                         * Math.pow(Parameters.theta, (paramS+1) * (timeAsDouble));
 
                 System.out.println("\t\tWeight is: " + weightRij[i][j]);
 
             }
         }
+
+        System.out.println(Arrays.deepToString(weightRij));
 
         //step 2.4 Computation of the trust value Ti for each proxy Pi
 
@@ -362,6 +395,9 @@ public class TrustManager {
 
             trustValue[i] = (1.0 / sumOfWeights) * sumOfWeightsWithNote;
 
+            if(Double.isNaN(trustValue[i])) {
+                System.out.println("NAN");
+            }
             System.out.println("Trust: " + trustValue[i]);
         }
 
@@ -376,7 +412,7 @@ public class TrustManager {
     private double[][] calculateContextualDistance(
             double dS[][], double dC[][], double sMax[], double cMax[], double s[][], double c[][], double sTarget, double cTarget) {
 
-        System.setOut(console);
+        //System.setOut(console);
 
         System.out.println("dS - ");
         System.out.println(Arrays.deepToString(dS));

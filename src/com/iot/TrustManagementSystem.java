@@ -118,7 +118,7 @@ public class TrustManagementSystem {
         TM = new TrustManager();
 
         try {
-            TM.init(5, 5, 0.2, 0.1, 1, 6);
+            TM.init(10, 10, 0.2, 0.1, 1, 6);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
